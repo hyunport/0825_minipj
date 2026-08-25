@@ -1,0 +1,27 @@
+# Local secrets and machine-specific environment
+.env
+**/.env
+!.env.example
+!**/.env.example
+.streamlit/secrets.toml
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local media and temporary files
+*.wav
+*.mp3
+*.tmp
+*.log
