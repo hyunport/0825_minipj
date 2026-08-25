@@ -31,6 +31,15 @@ class Settings:
     open_meteo_base_url: str = os.getenv("OPEN_METEO_BASE_URL", "https://api.open-meteo.com").rstrip("/")
     open_meteo_geocoding_url: str = os.getenv("OPEN_METEO_GEOCODING_URL", "https://geocoding-api.open-meteo.com").rstrip("/")
     max_image_size_mb: int = int(os.getenv("MAX_IMAGE_SIZE_MB", "10"))
+    kiosk_db_mode: str = os.getenv("KIOSK_DB_MODE", "mock")
+    database_url: str = os.getenv(
+        "DATABASE_URL",
+        "postgresql://kiosk:kiosk_dev@127.0.0.1:5432/kiosk",
+    )
+    kiosk_stt_mode: str = os.getenv("KIOSK_STT_MODE", "faster_whisper")
+    kiosk_stt_model: str = os.getenv("KIOSK_STT_MODEL", "tiny")
+    kiosk_agent_max_steps: int = int(os.getenv("KIOSK_AGENT_MAX_STEPS", "6"))
+    kiosk_pending_ttl_seconds: int = int(os.getenv("KIOSK_PENDING_TTL_SECONDS", "120"))
 
 
 settings = Settings()

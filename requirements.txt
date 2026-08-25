@@ -3,8 +3,10 @@ google-genai
 httpx
 openai
 pydantic
+psycopg[binary]
 python-dotenv
 python-multipart
 pytest
+faster-whisper
 streamlit
 uvicorn
