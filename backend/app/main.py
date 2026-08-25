@@ -4,6 +4,7 @@ from app.routers.stage_01_router import stage_01_router
 from app.routers.stage_02_router import stage_02_router
 from app.routers.stage_03_router import stage_03_router
 from app.routers.lab_router import lab_router
+from app.routers.kiosk_router import kiosk_router
 
 
 TAGS_METADATA = [
@@ -33,3 +34,4 @@ app.include_router(stage_03_router)
 # 7개 실전 Lab은 HTTP 진입점을 하나로 유지하고 내부 Routing Service에서
 # Agent-controlled Loop와 Agent-assisted Workflow로 안전하게 분기합니다.
 app.include_router(lab_router)
+app.include_router(kiosk_router)
