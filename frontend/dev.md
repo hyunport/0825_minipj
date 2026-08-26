@@ -141,15 +141,18 @@ streamlit run .\frontend\app.py --server.address 0.0.0.0 --server.port 8501
 
 ## 11. 완료 체크
 
-- [ ] 기존 Streamlit Page가 그대로 열린다.
-- [ ] 햄버거 키오스크 Page가 Sidebar에서 열린다.
-- [ ] DB 메뉴 세 개가 표시된다.
-- [ ] 모드 변경 시 주문 UI는 같고 요청 `mode`만 바뀐다.
-- [ ] 마이크 없이 텍스트 주문이 가능하다.
-- [ ] STT 결과를 수정할 수 있다.
-- [ ] `needs_clarification` 응답 후 같은 Session으로 추가 답변을 보낸다.
-- [ ] `confirmation_required`에서 `action_id`를 보관한다.
-- [ ] 확정 버튼이 `confirmed=true`와 해당 `action_id`를 보낸다.
-- [ ] 장바구니, 총금액, 주문번호가 표시된다.
-- [ ] Tool Calls와 Trace를 접어서 확인할 수 있다.
-- [ ] Backend 오류가 나도 Streamlit 앱 전체가 종료되지 않는다.
+- [x] 기존 Streamlit Page가 그대로 열린다.
+- [x] 햄버거 키오스크 Page가 Sidebar에서 열린다.
+- [x] DB 메뉴 세 개가 표시된다.
+- [x] 모드 변경 시 주문 UI는 같고 요청 `mode`만 바뀐다.
+- [x] 마이크 없이 텍스트 주문이 가능하다.
+- [x] STT 결과를 수정할 수 있다.
+- [x] `needs_clarification` 응답 후 같은 Session으로 추가 답변을 보낸다.
+- [x] `confirmation_required`에서 `action_id`를 보관한다.
+- [x] 확정 버튼이 `confirmed=true`와 해당 `action_id`를 보낸다.
+- [x] 장바구니, 총금액, 주문번호가 표시된다.
+- [x] Tool Calls와 Trace를 접어서 확인할 수 있다.
+- [x] Backend 오류가 나도 Streamlit 앱 전체가 종료되지 않는다.
+
+2026-08-26 검증: VPS에서 Backend(맥 PG `:5432` + Ollama `llama3.2`)에 붙여 Streamlit AppTest로
+위 항목 전부 확인. Workflow·Agent 모두 대표 문장 15,000원 → 확정 → `orders` 저장까지 통과.

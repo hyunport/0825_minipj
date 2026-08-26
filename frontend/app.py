@@ -21,8 +21,9 @@ tool_run = st.Page("app_pages/15_tool_run.py", title="Tool 실행")
 tool_errors = st.Page("app_pages/16_tool_errors.py", title="Tool 오류 처리")
 agent_cycle = st.Page("app_pages/17_agent_cycle.py", title="Agent Cycle")
 tool_use_labs = st.Page("app_pages/18_tool_use_labs.py", title="Tool Use Labs")
+hamburger_kiosk = st.Page("app_pages/19_hamburger_kiosk.py", title="햄버거 음성 키오스크")
 
-navigation = st.navigation([home, concept, travel, environment, llm, providers, image_analysis, tts, prompt, validation, structured, tool_schema, tool_select, tool_validation, tool_run, tool_errors, agent_cycle, tool_use_labs], position="hidden")
+navigation = st.navigation([home, concept, travel, environment, llm, providers, image_analysis, tts, prompt, validation, structured, tool_schema, tool_select, tool_validation, tool_run, tool_errors, agent_cycle, tool_use_labs, hamburger_kiosk], position="hidden")
 
 with st.sidebar:
     st.title("🧰 Mini Agent 03")
@@ -53,6 +54,10 @@ with st.sidebar:
         st.page_link(tool_errors, label="3-5. Tool 오류 처리")
         st.page_link(agent_cycle, label="3-6. Agent Cycle")
         st.page_link(tool_use_labs, label="3-7. 통합 Labs")
+
+    st.divider()
+    with st.expander("04. 햄버거 키오스크", expanded=True):
+        st.page_link(hamburger_kiosk, label="4-1. 햄버거 음성 키오스크")
 
     st.divider()
     st.caption("실행 환경")
