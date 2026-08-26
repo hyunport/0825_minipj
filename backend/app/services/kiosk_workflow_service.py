@@ -98,9 +98,10 @@ def extract_order_values(message: str) -> dict[str, Any]:
     if digit_match:
         quantity = int(digit_match.group(1))
     else:
-        word_match = re.search(r"(하나|한|둘|두|셋|세)\s*개", message)
+        # "하나/둘/셋"은 단독으로도 수량이지만 "한/두/세"는 "세트"와 겹치므로 "개"가 붙을 때만 인정합니다.
+        word_match = re.search(r"(하나|둘|셋)|(한|두|세)\s*개", message)
         if word_match:
-            quantity = KOREAN_QUANTITIES[word_match.group(1)]
+            quantity = KOREAN_QUANTITIES[word_match.group(1) or word_match.group(2)]
     if quantity is not None and not 1 <= quantity <= 20:
         quantity = None
     return {"option": option, "quantity": quantity}

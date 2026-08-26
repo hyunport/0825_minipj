@@ -198,8 +198,8 @@ Invoke-RestMethod http://<TAEWOONG_MAC_IP>:11434/api/tags
 - [ ] Windows Backend PC에서 5432 연결이 된다.
 - [ ] Windows Backend PC에서 11434 연결이 된다.
 - [ ] 인혜님에게 Mac IP와 접속 문자열 형식을 전달했다.
-- [ ] Workflow 주문이 `orders`, `order_items`에 저장된다.
-- [ ] Agent 주문도 같은 테이블에 저장된다.
+- [x] Workflow 주문이 `orders`, `order_items`에 저장된다. (2026-08-26 K000001 확인)
+- [x] Agent 주문도 같은 테이블에 저장된다. (2026-08-26 K000004 확인)
 
 ## 12. 종료와 재실행
 

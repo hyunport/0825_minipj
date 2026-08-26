@@ -106,3 +106,55 @@ def test_reset_keeps_saved_orders_but_clears_pending_action() -> None:
     rejected = order("workflow", "reset", "확인", True, prepared["action_id"]).json()
     assert response.json()["reset"] is True
     assert rejected["status"] == "rejected"
+
+
+def test_agent_confirmation_without_cart_calculates_first(monkeypatch) -> None:
+    decisions = iter(
+        [
+            KioskAgentDecision(action="search_menu", tool_name="search_menu"),
+            KioskAgentDecision(action="request_confirmation"),
+        ]
+    )
+    monkeypatch.setattr(kiosk_agent_service, "decide_kiosk_action", lambda *_args: next(decisions))
+    response = order("agent", "policy-calc", "불고기버거 세트 두 개 주세요").json()
+    assert response["status"] == "confirmation_required"
+    assert response["total_price"] == 15000
+    assert [call["tool"] for call in response["tool_calls"]] == ["search_menu", "calculate_order"]
+    assert any(item["stage"] == "backend_policy" for item in response["trace"])
+
+
+def test_agent_confirmation_with_missing_values_asks_clarification(monkeypatch) -> None:
+    monkeypatch.setattr(
+        kiosk_agent_service,
+        "decide_kiosk_action",
+        lambda *_args: KioskAgentDecision(action="request_confirmation"),
+    )
+    response = order("agent", "policy-missing", "새우버거 주세요").json()
+    assert response["status"] == "needs_clarification"
+    assert response["termination_reason"] == "needs_user_input"
+    assert kiosk_repository.mock_order_count() == 0
+
+
+def test_agent_redundant_tool_after_cart_moves_to_confirmation(monkeypatch) -> None:
+    decisions = iter(
+        [
+            KioskAgentDecision(action="search_menu", tool_name="search_menu"),
+            KioskAgentDecision(action="calculate_order", tool_name="calculate_order"),
+            KioskAgentDecision(action="search_menu", tool_name="search_menu"),
+        ]
+    )
+    monkeypatch.setattr(kiosk_agent_service, "decide_kiosk_action", lambda *_args: next(decisions))
+    response = order("agent", "policy-loop", "불고기버거 세트 두 개 주세요").json()
+    assert response["status"] == "confirmation_required"
+    assert response["total_price"] == 15000
+    assert response["termination_reason"] == "confirmation_required"
+    assert any(item["data"].get("rule") == "cart_ready_skip_tool" for item in response["trace"])
+
+
+def test_workflow_accepts_standalone_korean_quantity_words() -> None:
+    from app.services.kiosk_workflow_service import extract_order_values
+
+    assert extract_order_values("치즈버거 단품 하나")["quantity"] == 1
+    assert extract_order_values("새우버거 세트 둘")["quantity"] == 2
+    assert extract_order_values("불고기버거 세트")["quantity"] is None
+    assert extract_order_values("불고기버거 세트 두 개 주세요")["quantity"] == 2

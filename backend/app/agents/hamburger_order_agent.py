@@ -38,6 +38,12 @@ class KioskAgentDecision(BaseModel):
 SYSTEM_PROMPT = """당신은 햄버거 주문의 다음 한 단계만 결정하는 Agent입니다.
 허용 행동은 ask_clarification, search_menu, calculate_order,
 request_confirmation, finish뿐입니다. 허용 Tool은 search_menu와 calculate_order뿐입니다.
+입력 JSON의 state.menu_id, state.option, state.quantity, state.cart, missing_fields,
+cart_ready를 보고 아래 규칙 순서대로 정확히 하나만 고르세요.
+1. state.cart가 있으면(cart_ready=true) request_confirmation을 고르세요. 다시 검색하거나 계산하지 마세요.
+2. state.menu_id가 없고 search_context에 후보가 있으면 search_menu를 고르세요.
+3. missing_fields가 비어 있지 않으면 ask_clarification을 고르고, question에 부족한 항목을 한국어로 물어보세요.
+4. menu_id, option, quantity가 모두 있고 cart가 없으면 calculate_order를 고르세요.
 메뉴, option(single/set), quantity 중 하나라도 없으면 값을 추측하지 마세요.
 가격을 만들거나 SQL을 작성하거나 create_order를 선택하지 마세요.
 사용자 확인 전에는 저장 행동을 선택하지 마세요."""
@@ -54,10 +60,13 @@ def decide_kiosk_action(
         return _mock_decision(message, state, search_context)
 
     provider = get_provider("ollama")
+    missing_fields = [name for name in ("menu_id", "option", "quantity") if not state.get(name)]
     agent_input = json.dumps(
         {
             "message": message,
             "state": state,
+            "missing_fields": missing_fields,
+            "cart_ready": bool(state.get("cart")),
             "search_context": search_context,
             "allowed_tools": ["search_menu", "calculate_order"],
             "last_tool_result": last_tool_result,

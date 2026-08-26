@@ -128,6 +128,20 @@ Agent 제한:
 `kiosk_agent_service.py`가 반복, Tool 실행, 상태 병합, 종료와 Trace를 소유한다. Agent
 파일은 판단 계약과 Prompt에 집중한다.
 
+### 8-1. Backend 정책 가드 (2026-08-26 통합 테스트 반영)
+
+실제 `llama3.2`는 Mock과 달리 순서를 자주 어겼다 (cart 없이 `request_confirmation`,
+계산 뒤 `search_menu` 반복으로 6 Step 소진). Ollama 결정은 Trace에 그대로 남기되
+Backend가 아래 정책으로 안전하게 마무리한다 (`stage: backend_policy`).
+
+- `cart_ready_skip_tool`: 금액 계산이 끝났는데 Tool을 다시 고르면 확인 단계로 진행
+- `search_before_confirmation`: menu_id 없이 확인 요청 → 읽기 전용 `search_menu` 먼저 실행
+- `missing_values_ask_clarification`: 필수값 없이 확인 요청 → 임의 기본값 대신 재질문
+- `calculate_before_confirmation`: cart 없이 확인 요청 → `calculate_order`로 DB 가격 계산
+
+Prompt에는 `missing_fields`, `cart_ready`와 결정 규칙 4개를 추가했다. 가격 생성·SQL·
+확인 전 저장 금지 원칙은 그대로다.
+
 ## 9. Tool 구현
 
 `kiosk_tools.py`에 Pydantic 입력 모델과 Allowlist를 둔다.
@@ -234,9 +248,9 @@ DATABASE_URL=postgresql://kiosk:<PASSWORD>@<TAEWOONG_MAC_IP>:5432/kiosk
 - [ ] 기존 Backend 테스트가 계속 통과한다.
 - [ ] Swagger에 Kiosk Endpoint 네 개가 보인다.
 - [ ] Mock DB 모드에서 독립 테스트가 된다.
-- [ ] 태웅님 PostgreSQL 연결 모드가 된다.
-- [ ] 태웅님 Ollama로 Agent 모드가 된다.
+- [x] 태웅님 PostgreSQL 연결 모드가 된다. (2026-08-26 VPS→맥 Tailscale 검증)
+- [x] 태웅님 Ollama로 Agent 모드가 된다. (2026-08-26 llama3.2 3회 연속 15,000원)
 - [ ] Workflow는 Ollama 없이 동작한다.
-- [ ] Agent와 Workflow의 최종 Cart·금액이 같다.
-- [ ] 확인 전 DB 주문이 생성되지 않는다.
-- [ ] Trace에서 두 방식의 진행 차이를 확인할 수 있다.
+- [x] Agent와 Workflow의 최종 Cart·금액이 같다.
+- [x] 확인 전 DB 주문이 생성되지 않는다.
+- [x] Trace에서 두 방식의 진행 차이를 확인할 수 있다.
